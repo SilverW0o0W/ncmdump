@@ -9,40 +9,43 @@ import argparse, os, sys, re
 import ncmdump
 
 parser = argparse.ArgumentParser(
-    prog = 'ncmdump'
+    prog='ncmdump'
 )
 parser.add_argument(
-    'input', metavar = 'input', nargs = '*', default = ['.'],
-    help = 'ncm file or folder path'
+    'input', metavar='input', nargs='*', default=['.'],
+    help='ncm file or folder path'
 )
 parser.add_argument(
-    '-f', metavar = 'format', dest = 'format', default = '',
-    help = 'customize naming format'
+    '-f', metavar='format', dest='format', default='',
+    help='customize naming format'
 )
 parser.add_argument(
-    '-o', metavar = 'output', dest = 'output',
-    help = 'customize saving folder'
+    '-o', metavar='output', dest='output',
+    help='customize saving folder'
 )
 parser.add_argument(
-    '-d', dest = 'delete', action = 'store_true',
-    help = 'delete source after conversion'
+    '-d', dest='delete', action='store_true',
+    help='delete source after conversion'
 )
 group = parser.add_mutually_exclusive_group()
 group.add_argument(
-    '-c', dest = 'cover', action = 'store_true',
-    help = 'overwrite file with the same name'
+    '-c', dest='cover', action='store_true',
+    help='overwrite file with the same name'
 )
 group.add_argument(
-    '-s', dest = 'skip', action = 'store_true',
-    help = 'skip conversion if file exist'
+    '-s', dest='skip', action='store_true',
+    help='skip conversion if file exist'
 )
 args = parser.parse_args()
 
+
 def validate_name(name):
-    pattern = {u'\\': u'＼', u'/': u'／', u':': u'：', u'*': u'＊', u'?': u'？', u'"': u'＂', u'<': u'＜', u'>': u'＞', u'|': u'｜'}
+    pattern = {u'\\': u'＼', u'/': u'／', u':': u'：', u'*': u'＊', u'?': u'？', u'"': u'＂', u'<': u'＜', u'>': u'＞',
+               u'|': u'｜'}
     for character in pattern:
         name = name.replace(character, pattern[character])
     return name
+
 
 def validate_collision(path):
     index = 1
@@ -51,6 +54,7 @@ def validate_collision(path):
         path = '({})'.format(index).join(os.path.splitext(origin))
         index += 1
     return path
+
 
 def name_format(path, meta):
     information = {
@@ -74,6 +78,7 @@ def name_format(path, meta):
     save = os.path.join(folder, name)
     if not (args.cover or args.skip): save = validate_collision(save)
     return save
+
 
 if args.output:
     args.output = os.path.abspath(args.output)
